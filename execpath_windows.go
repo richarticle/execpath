@@ -11,13 +11,13 @@ func execPath() (string, error) {
 	kernel := syscall.MustLoadDLL("kernel32.dll")
 	proc := kernel.MustFindProc("GetModuleFileNameW")
 	buf := make([]uint16, syscall.MAX_PATH)
-	len := uint32(len(buf))
-	ret, _, err = proc.Call(0, uintptr(unsafe.Pointer(&buf[0])), uintptr(len))
+	size := uint32(len(buf))
+	ret, _, err := proc.Call(0, uintptr(unsafe.Pointer(&buf[0])), uintptr(size))
 
-	len = uint32(ret)
-	if n == 0 {
+	size = uint32(ret)
+	if size == 0 {
 		return "", err
 	}
 
-	return string(utf16.Decode(buf[0:len])), nil
+	return string(utf16.Decode(buf[0:size])), nil
 }
